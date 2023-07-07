@@ -8,7 +8,6 @@ const braceDefinitions: BraceDefinition[] = [
   {open: '(', close: ')'},
   {open: '[', close: ']'},
 ];
-g;
 
 export const validBraces = (input: string) => {
   const stack: string[] = [];
