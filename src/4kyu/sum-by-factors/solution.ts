@@ -1,63 +1,53 @@
-function* primeNumberSequence(): Iterator<number> {
-  let next = 2;
-  while (true) {
-    yield next;
+const getPrimeNumbers = (limit: number): number[] => {
+  const primes: number[] = [];
 
-    let foundNextPrime = false;
+  for (let candidatePrime = 2; candidatePrime <= limit; candidatePrime++) {
+    if (candidatePrime === 2) {
+      primes.push(2);
+      continue;
+    }
 
-    while (!foundNextPrime) {
-      next++;
+    if (candidatePrime % 2 === 0) {
+      continue;
+    }
 
-      if (next % 2 === 0) {
-        continue;
-      }
-
-      foundNextPrime = true;
-
-      const sqrt = Math.sqrt(next);
-      for (let i = 2; i <= sqrt; i++) {
-        if (next % i === 0) {
-          foundNextPrime = false;
-          break;
-        }
+    const sqrt = Math.sqrt(candidatePrime);
+    let isPrime = true;
+    for (let divisor = 2; divisor <= sqrt; divisor++) {
+      if (candidatePrime % divisor === 0) {
+        isPrime = false;
+        break;
       }
     }
+
+    if (isPrime) {
+      primes.push(candidatePrime);
+    }
   }
-}
+
+  return primes;
+};
 
 export function sumOfDivided(list: number[]): number[][] {
   const results: number[][] = [];
+  const largestPrime = Math.max(...list.map(Math.abs));
+  const primeNumbers = getPrimeNumbers(largestPrime);
 
-  const totals: Record<number, number> = {};
-  const largestPrime = list.map(x => Math.abs(x)).sort((a, b) => b - a)[0];
+  const primeFactors = new Map<number, number>();
 
-  for (let listIndex = 0; listIndex < list.length; listIndex++) {
-    for (let i = 2; i <= Math.abs(largestPrime); i++) {
-      const primes = primeNumberSequence();
-      for (
-        let prime = primes.next().value;
-        prime <= Math.abs(largestPrime);
-        prime = primes.next().value
-      ) {
-        if (i * prime === Math.abs(list[listIndex])) {
-          if (Object.prototype.hasOwnProperty.call(totals, prime)) {
-            totals[prime] += list[listIndex];
-          } else {
-            totals[prime] = list[listIndex];
-          }
-        }
+  for (const num of list) {
+    for (const prime of primeNumbers) {
+      if (Math.abs(num) % prime === 0) {
+        primeFactors.set(prime, (primeFactors.get(prime) || 0) + num);
       }
     }
   }
 
-  const keys = Object.keys(totals);
+  for (const [key, value] of primeFactors.entries()) {
+    results.push([key, value]);
+  }
 
-  keys
-    .map(x => parseInt(x))
-    .sort((a, b) => a - b)
-    .forEach(key => {
-      results.push([key, totals[key]]);
-    });
+  results.sort((a, b) => a[0] - b[0]);
 
   return results;
 }
