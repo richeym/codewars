@@ -28,27 +28,36 @@ function* primeNumberSequence(): Iterator<number> {
 export function sumOfDivided(list: number[]): number[][] {
   const results: number[][] = [];
 
+  const totals: Record<number, number> = {};
+  const largestPrime = list.map(x => Math.abs(x)).sort((a, b) => b - a)[0];
+
   for (let listIndex = 0; listIndex < list.length; listIndex++) {
-    for (let i = 2; i <= Math.abs(list[listIndex]) / 2; i++) {
+    for (let i = 2; i <= Math.abs(largestPrime); i++) {
       const primes = primeNumberSequence();
       for (
         let prime = primes.next().value;
-        prime < Math.abs(list[listIndex]) / 2;
+        prime <= Math.abs(largestPrime);
         prime = primes.next().value
       ) {
         if (i * prime === Math.abs(list[listIndex])) {
-          const p = results.find(x => x[0] === prime);
-          if (p) {
-            p[1] += list[listIndex];
+          if (Object.prototype.hasOwnProperty.call(totals, prime)) {
+            totals[prime] += list[listIndex];
           } else {
-            results.push([prime, list[listIndex]]);
+            totals[prime] = list[listIndex];
           }
         }
       }
     }
   }
 
-  results.sort((a, b) => a[0] - b[0]);
+  const keys = Object.keys(totals);
+
+  keys
+    .map(x => parseInt(x))
+    .sort((a, b) => a - b)
+    .forEach(key => {
+      results.push([key, totals[key]]);
+    });
 
   return results;
 }

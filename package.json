@@ -20,5 +20,8 @@
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "test": "npx jest"
+  },
+  "engines": {
+    "node": ">=10.4.0"
   }
 }
