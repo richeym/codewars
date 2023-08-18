@@ -1,33 +1,37 @@
-// https://www.quickperm.org/
-const quickPerm = (input: number): number[] => {
-  const a = input.toString().split('').map(Number);
-  const N = a.length;
-  const p: number[] = [...Array(N + 1).keys()];
-  const results = new Set<number>();
-  let i = 1;
+export function nextBigger(n: number): number {
+  const digits = n.toString().split('').map(Number);
+  const length = digits.length;
 
-  while (i < N) {
-    p[i]--;
-    const j = i % 2 === 0 ? 0 : p[i];
-
-    [a[j], a[i]] = [a[i], a[j]];
-
-    const result = parseInt(a.join(''));
-    if (result > input) results.add(result);
-
-    i = 1;
-    while (p[i] === 0) {
-      p[i] = i;
-      i++;
-    }
+  if (n.toString() === [...digits].sort((a, b) => b - a).join('')) {
+    return -1;
   }
 
-  return Array.from(results.values());
-};
+  let i = length - 1;
+  while (i > 0 && digits[i] <= digits[i - 1]) {
+    i--;
+  }
+  const swapAIndex = i - 1;
 
-export function nextBigger(n: number): number {
-  const permutations = quickPerm(n);
-  permutations.sort();
+  let nextDigitIndex: number | undefined;
+  while (i < digits.length) {
+    if (
+      digits[i] > digits[swapAIndex] &&
+      (nextDigitIndex === undefined || digits[i] < digits[nextDigitIndex])
+    ) {
+      nextDigitIndex = i;
+    }
+    i++;
+  }
 
-  return permutations.length > 0 ? permutations[0] : -1;
+  const swapBIndex = nextDigitIndex!;
+
+  [digits[swapAIndex], digits[swapBIndex]] = [
+    digits[swapBIndex],
+    digits[swapAIndex],
+  ];
+
+  const left = digits.slice(0, swapAIndex + 1);
+  const right = digits.slice(swapAIndex + 1).sort();
+
+  return parseInt([...left, ...right].join(''));
 }

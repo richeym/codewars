@@ -1,15 +1,22 @@
 import {assert} from 'chai';
+
 import {nextBigger} from './solution';
 
 describe('Basic tests', () => {
-  it('Small numbers', () => {
-    assert.strictEqual(nextBigger(12), 21);
-    assert.strictEqual(nextBigger(513), 531);
-    assert.strictEqual(nextBigger(2017), 2071);
-    assert.strictEqual(nextBigger(414), 441);
-    assert.strictEqual(nextBigger(144), 414);
-    assert.strictEqual(nextBigger(2), -1);
+  test.each([
+    [12, 21],
+    [1234, 1243],
+    [513, 531],
+    [2017, 2071],
+    [414, 441],
+    [144, 414],
+    [2, -1],
+    [4321, -1],
+    [64321, -1],
+  ])('Small number %p returns %p', (input, expected) => {
+    assert.strictEqual(nextBigger(input), expected);
   });
+
   it('Bigger numbers', () => {
     assert.strictEqual(nextBigger(123456789), 123456798);
     assert.strictEqual(nextBigger(1234567890), 1234567908);
